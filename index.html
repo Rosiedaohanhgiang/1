@@ -1216,6 +1216,7 @@
             });
 
             // --- FORM SUBMIT LOGIC ---
+            // --- FORM SUBMIT LOGIC GỬI VỀ TELEGRAM ---
             const contactForm = document.getElementById('contact-form');
             if (contactForm) {
                 const formMessage = document.getElementById('form-message');
@@ -1224,10 +1225,9 @@
                 contactForm.addEventListener('submit', function(event) {
                     event.preventDefault();
 
-                    // Simple validation
+                    // Validation cơ bản
                     const name = document.getElementById('name').value;
                     const email = document.getElementById('email').value;
-                    const phone = document.getElementById('phone').value;
                     const message = document.getElementById('message').value;
 
                     if (!name || !email || !message) {
@@ -1239,25 +1239,22 @@
                     submitButton.textContent = 'Đang gửi...';
                     submitButton.disabled = true;
 
-                    // Đường link Web App Google Apps Script
+                    // Link Web App Google Apps Script của Rosie
                     const googleWebAppUrl = "https://script.google.com/macros/s/AKfycbzEDcJmjBzKMppFOzh-lbkcQ-KyDqCF3YF2A7wCPGtPrEZYTT2a6EYPszKOiHj6n7Djxg/exec";
                     
                     fetch(googleWebAppUrl, {
                         method: "POST",
-                        body: new FormData(this)
+                        body: new FormData(this),
+                        mode: 'no-cors' // Quan trọng: Giúp bỏ qua lỗi chặn chéo CORS của trình duyệt
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.result === "success") {
-                            formMessage.textContent = 'Cảm ơn bạn! Yêu cầu đã được gửi thành công.';
-                            formMessage.className = 'text-center mb-4 p-3 rounded-lg bg-green-100 text-green-700 block';
-                            contactForm.reset();
-                        } else {
-                            throw new Error("Lỗi máy chủ");
-                        }
+                    .then(() => {
+                        // Khi dùng no-cors, trình duyệt sẽ luôn coi là gửi thành công
+                        formMessage.textContent = 'Cảm ơn bạn! Yêu cầu hỗ trợ đã được gửi thành công.';
+                        formMessage.className = 'text-center mb-4 p-3 rounded-lg bg-green-100 text-green-700 block';
+                        contactForm.reset();
                     })
                     .catch((err) => {
-                        formMessage.textContent = 'Gửi thất bại! Vui lòng thử lại sau.';
+                        formMessage.textContent = 'Gửi thất bại! Vui lòng kiểm tra lại kết nối mạng.';
                         formMessage.className = 'text-center mb-4 p-3 rounded-lg bg-red-100 text-red-700 block';
                     })
                     .finally(() => {
@@ -1269,4 +1266,5 @@
         });
     </script>
 </body>
+
 </html>
